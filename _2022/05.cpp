@@ -22,7 +22,7 @@ string  get_input(string file_name) {
     return str;
 }
 
-map<string, string>lookup = {
+map<string, string>bin_lookup = {
     {"0010", "A"}, {"0000", "E"}, {"0001", "T"}, {"0011", "I"}, {"0100", "N"},
     {"0101", "O"}, {"0110", "S"}, {"0111", "H"}, {"10000", "R"}, {"10001", "D"},
     {"10010", "L"}, {"10011", "U"}, {"10100", "C"}, {"10101", "M"}, {"10110", "F"},
@@ -48,10 +48,22 @@ string hexToBinary(const string& hex) {
 
 void solve(string &hex_str) {
     string bin_str = hexToBinary(hex_str);
+    string msg = "";
     for(int i=0;i<bin_str.length();i++) {
-        ;
+        if(bin_lookup.find(bin_str.substr(i, 4))!=bin_lookup.end()) {
+            msg+=bin_lookup[bin_str.substr(i, 4)];
+            i+=3;
+        } else if(bin_lookup.find(bin_str.substr(i, 5))!=bin_lookup.end()) {
+            msg+=bin_lookup[bin_str.substr(i, 5)];
+            i+=4;
+        } else if(bin_lookup.find(bin_str.substr(i, 7))!=bin_lookup.end()) {
+            msg+=bin_lookup[bin_str.substr(i, 7)];
+            i+=6;
+        } else {
+            cout<<"\nFAIL:: "<<i<<"\n";
+        }
     }
-    cout<<"\nRES:: "<<""<<"\n\n";
+    cout<<"\nRES:: "<<msg<<"\n\n";
 }
 
 int main() {

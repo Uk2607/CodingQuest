@@ -6,6 +6,8 @@
 
 using namespace std;
 
+#define ll long long
+
 vector<vector<int>>  get_input(string file_name) {
     string file_path = "2022/"+file_name+".in";
     ifstream file(file_path);
@@ -32,7 +34,14 @@ vector<vector<int>>  get_input(string file_name) {
 }
 
 void solve(vector<vector<int>>&arr) {
-    cout<<"\nRES:: "<<""<<"\n\n";
+    int dist = 0;
+    for(int i=1;i<arr.size();i++) {
+        ll sq_sum = 0LL;
+        for(int k=0;k<3;k++) sq_sum += pow(arr[i][k]-arr[i-1][k], 2LL);
+        cout<<i<<": "<<sq_sum<<"\n";
+        dist += sqrt(sq_sum);
+    }
+    cout<<"\nRES:: "<<dist<<"\n\n";
 }
 
 int main() {

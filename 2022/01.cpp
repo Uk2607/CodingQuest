@@ -28,7 +28,15 @@ vector<int>  get_input(string file_name) {
 }
 
 void solve(vector<int>&arr) {
-    cout<<"\nRES:: "<<""<<"\n\n";
+    int L = 1500, R = 1600, sum = 0, i=0, cnt=0;
+    while(i<60) sum+=arr[i++];
+    if(sum/60<L || sum/60>R) cnt++;
+    for(;i<arr.size();i++) {
+        sum+=arr[i];
+        sum-=arr[i-60];
+        if(sum/60<L || sum/60>R) cnt++;
+    }
+    cout<<"\nRES:: "<<cnt<<"\n\n";
 }
 
 int main() {

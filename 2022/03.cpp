@@ -32,21 +32,11 @@ vector<vector<int>>  get_input(string file_name) {
 }
 
 void solve(vector<vector<int>>&arr) {
-    set<int>winning_lottery = {12, 48, 30, 95, 15, 55, 97};
-    int amnt = 0;
-    for(vector<int>&lot: arr) {
-        int cnt = 0;
-        for(int x: lot) if(winning_lottery.find(x)!=winning_lottery.end()) cnt++;
-        if(cnt<3) {cout<<"SKIP\n"; continue;}
-        int won = pow(10,cnt-3);
-        cout<<"WON: "<<won<<"\n";
-        amnt+=won;
-    }
-    cout<<"\nRES:: "<<amnt<<"\n\n";
+    cout<<"\nRES:: "<<""<<"\n\n";
 }
 
 int main() {
-    vector<vector<int>> arr = get_input("02");
+    vector<vector<int>> arr = get_input("03");
     solve(arr);
     return 0;
 }

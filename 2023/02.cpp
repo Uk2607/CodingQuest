@@ -27,20 +27,9 @@ vector<int> get_input(string file_name) {
     return arr;
 }
 
-string to_bin(int x) {
-    string b = "";
-    while(x>0) {
-        b = (x%2==1?'1':'0') + b;
-        x>>=1;
-    }
-    while (b.length()<16) b = '0'+b;
-    return b;
-}
-
 void solve(vector<int>&arr) {
     int sum = 0, cnt = 0;
     for(int x: arr) {
-        string bin_str = to_bin(x);
         if(__builtin_popcount(x)%2==0) {
             int y = x;
             if(y>=32768) y = x-32768; // 32768 = 2^15 remove parity bit

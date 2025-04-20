@@ -41,16 +41,14 @@ void solve(vector<int>&arr) {
     int sum = 0, cnt = 0;
     for(int x: arr) {
         string bin_str = to_bin(x);
-        cout<<x<<"\t:: "<<bin_str;
-        if(bin_str[0]=='1') {
-            int y = x-32768; // 32768 = 2^15 remove parity bit
-            cout<<" : "<<y;
+        if(__builtin_popcount(x)%2==0) {
+            int y = x;
+            if(y>=32768) y = x-32768; // 32768 = 2^15 remove parity bit
             sum += y;
             cnt++;
         }
-        cout<<"\n";
     }
-    cout<<"\nRES:: "<<sum/cnt<<"\n\n";
+    cout<<"\nRES:: "<<round(float(sum)/float(cnt))<<"\n\n";
     return;
 }
 

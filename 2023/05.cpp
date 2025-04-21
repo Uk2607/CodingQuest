@@ -32,10 +32,12 @@ vector<vector<int>> get_input(string file_name) {
 }
 
 void solve(vector<vector<int>>&arr) {
-    vector<vector<char>>grid(10, vector<char>(50, '.'));
+    vector<vector<char>>grid(10, vector<char>(50, ' '));
     for(vector<int>v: arr) {
-        int x = v[0], y = v[1], dy = v[2]-1, dx = v[3]-1;
-        ;
+        int y = v[0], x = v[1], dy = v[2]-1, dx = v[3]-1;
+        for(int i=x;i<=min(9,x+dx);i++)
+            for(int j=y;j<=min(49,y+dy);j++)
+                grid[i][j] = grid[i][j]=='#'?' ':'#';
     }
 
     cout<<"\nRES::\n";

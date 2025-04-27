@@ -33,7 +33,7 @@ vector<vector<float>> get_input(string file_name) {
 
 void solve(vector<vector<float>>&arr) {
     int N = 100;
-    vector<vector<char>>grid(N, vector<char>(N, '.'));
+    vector<string>grid(N, string(N, '.'));
     int T = 3600, t=3600;
     bool flag;
     while(t<=T+60) {
@@ -48,20 +48,14 @@ void solve(vector<vector<float>>&arr) {
         }
         if(flag) {
             cout<<"|"<<t<<"|\n";
-            for(vector<char>v: grid) {
-                for(char c: v) cout<<c;
-                cout<<"\n";
-            }
+            for(string str: grid) cout<<str<<"\n";
             cout<<"\n";
         }
         t++;
     }
     cout<<"\nLast State\n";
     cout<<"|"<<t-1<<"|\n";
-    for(vector<char>v: grid) {
-        for(char c: v) cout<<c;
-        cout<<"\n";
-    }
+    for(string str: grid) cout<<str<<"\n";
     cout<<"\n";
     cout<<"\nRES::\n"<<""<<"\n";
 }

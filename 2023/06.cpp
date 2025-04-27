@@ -34,9 +34,9 @@ vector<vector<float>> get_input(string file_name) {
 void solve(vector<vector<float>>&arr) {
     int N = 100;
     vector<vector<char>>grid(N, vector<char>(N, '.'));
-    int T = 1440000, t=0;
+    int T = 3600, t=3600;
     bool flag;
-    while(t<=T) {
+    while(t<=T+60) {
         flag = false;
         for(vector<float>&v: arr) {
             float y=v[0], x=v[1], dy=v[2], dx=v[3];

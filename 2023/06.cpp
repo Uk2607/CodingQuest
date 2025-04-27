@@ -35,29 +35,19 @@ void solve(vector<vector<float>>&arr) {
     int N = 100;
     vector<string>grid(N, string(N, '.'));
     int T = 3600, t=3600;
-    bool flag;
     while(t<=T+60) {
-        flag = false;
         for(vector<float>&v: arr) {
             float y=v[0], x=v[1], dy=v[2], dx=v[3];
             int nx = x+(t*dx), ny = y+(t*dy);
-            if(nx>=0 && nx<N && ny>=0 && ny<N && grid[nx][y]=='.') {
-                grid[nx][ny] = '#';
-                flag = true;
-            }
-        }
-        if(flag) {
-            cout<<"|"<<t<<"|\n";
-            for(string str: grid) cout<<str<<"\n";
-            cout<<"\n";
+            if(nx>=0 && nx<N && ny>=0 && ny<N && grid[nx][ny]=='.') grid[nx][ny] = '#';
         }
         t++;
     }
-    cout<<"\nLast State\n";
-    cout<<"|"<<t-1<<"|\n";
-    for(string str: grid) cout<<str<<"\n";
-    cout<<"\n";
-    cout<<"\nRES::\n"<<""<<"\n";
+    int X, Y;
+    for(int i=0;i<N;i++)
+        for(int j=0;j<N;j++)
+            if(grid[i][j]=='.') { X = j; Y = i; }
+    cout<<"\nRES::\n"<<X<<":"<<Y<<"\n";
 }
 
 int main() {

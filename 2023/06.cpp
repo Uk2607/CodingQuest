@@ -34,24 +34,40 @@ vector<vector<float>> get_input(string file_name) {
 void solve(vector<vector<float>>&arr) {
     int N = 100;
     vector<vector<char>>grid(N, vector<char>(N, '.'));
-    int T = 3600, t=0;
+    int T = 1440000, t=0;
+    bool flag;
     while(t<=T) {
+        flag = false;
         for(vector<float>&v: arr) {
-            float x=v[0], y=v[1], dx=v[2], dy=v[3];
-            float nx = x+(t*dx), ny = y+(t*dy);
-            if(nx>=0 && nx<N &&ny>=0 && ny<N) grid[int(nx)][int(ny)] = '#';
+            float y=v[0], x=v[1], dy=v[2], dx=v[3];
+            int nx = x+(t*dx), ny = y+(t*dy);
+            if(nx>=0 && nx<N && ny>=0 && ny<N && grid[nx][y]=='.') {
+                grid[nx][ny] = '#';
+                flag = true;
+            }
+        }
+        if(flag) {
+            cout<<"|"<<t<<"|\n";
+            for(vector<char>v: grid) {
+                for(char c: v) cout<<c;
+                cout<<"\n";
+            }
+            cout<<"\n";
         }
         t++;
     }
+    cout<<"\nLast State\n";
+    cout<<"|"<<t-1<<"|\n";
     for(vector<char>v: grid) {
         for(char c: v) cout<<c;
         cout<<"\n";
     }
+    cout<<"\n";
     cout<<"\nRES::\n"<<""<<"\n";
 }
 
 int main() {
-    vector<vector<float>> arr = get_input("05");
+    vector<vector<float>> arr = get_input("06");
     solve(arr);
     return 0;
 }

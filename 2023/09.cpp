@@ -30,10 +30,9 @@ struct TreeNode {
     long long id;
     TreeNode *left, *right;
 
-    TreeNode(long long id) {
-        left = NULL;
-        right = NULL;
-    }
+    TreeNode() : id(0), left(NULL), right(NULL) {} // Default constructor
+
+    TreeNode(long long val) : id(val), left(NULL), right(NULL) {} // Parameterized constructor
 
     TreeNode(TreeNode *node) {
         id = node->id;
@@ -55,12 +54,35 @@ long long hex_to_dec(string hex) {
     return res;
 }
 
+TreeNode* insertNode(long long val, TreeNode *root) {
+    if (root == NULL) {
+        TreeNode* newNode = new TreeNode(val);
+        return newNode;
+    }
+    if(val<=root->id) root->left = insertNode(val, root->left);
+    else root->right = insertNode(val, root->right);
+    return root;
+}
+
+int tree_height(TreeNode *node) {
+    if(node==NULL) return 0;
+    return 1+max(tree_height(node->left), tree_height(node->right));
+}
+
+int tree_diameter(TreeNode *node) {
+    return 0;
+}
+
 void solve(vector<string>&arr) {
+    TreeNode *root = NULL;
     for(string hex: arr) {
         long long x = hex_to_dec(hex);
-        cout<<hex<<" "<<x<<"\n";
+        root = insertNode(x, root);
     }
-    cout<<"RES:: "<<""<<"\n";
+    int h = tree_height(root);
+    int d = tree_diameter(root);
+    cout<<"Height:: "<<h<<"\n";
+    cout<<"RES:: "<<(h*d)<<"\n";
 }
 
 int main() {

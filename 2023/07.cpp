@@ -3,6 +3,7 @@
 #include<fstream>
 #include<sstream>
 #include<map>
+#include<unistd.h>
 
 using namespace std;
 
@@ -48,6 +49,11 @@ pair<vector<pair<int,int>>, string> get_input(string file_name) {
     return {arr, moves};
 }
 
+void clearScreen() {
+    // ANSI escape code to clear the screen
+    cout << "\033[2J\033[1;1H";
+}
+
 void solve(vector<pair<int,int>>&fruits, string &moves) {
     int idx = 0, N = 20, score, k = 0;
     vector<pair<int,int>>snake = {{0, 0}};
@@ -75,17 +81,21 @@ void solve(vector<pair<int,int>>&fruits, string &moves) {
             grid[f.first][f.second] = 'F';
         }
         for(int i=snake.size()-1;i>0;i--) snake[i] = snake[i-1];
-        for(pair<int,int>p: snake) if(p==make_pair(nx, ny)) break;
+        bool flag = false;
+        for(pair<int,int>p: snake) if(p==make_pair(nx, ny)) { flag = true; break;}
+        if(flag) break;
         snake[0] = {nx, ny};
         for(pair<int,int>p: snake) grid[p.first][p.second] = 'o';
         grid[snake[0].first][snake[0].second] = 'O';
         score++;
 
+        clearScreen();
         cout<<m<<"\n";
         for(string r: grid) {
             cout<<r<<"\n";
             cout<<"\n";
-        } cout<<"\n";
+        } cout<<score<<"\n";
+        usleep(100000); // Sleep for 300 milliseconds (300,000 microseconds)
 
         cout<<++k<<" : "<<nx<<", "<<ny<<" == "<<score<<"\n";
 

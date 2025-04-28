@@ -31,12 +31,25 @@ vector<vector<int>> get_input(string file_name) {
     return arr;
 }
 
-void solve(vector<vector<int>>&arr) {
-    for(vector<int>row: arr) {
-        for(int x: row) cout<<x<<"\t";
-        cout<<"\n";
+int tsp(vector<vector<int>>&arr, vector<vector<int>>&dp, int mask, int curr, int N) {
+    if(mask == (1<<N)-1) return arr[curr][0];
+    if(dp[curr][mask]!=-1) return dp[curr][mask];
+
+    int res = INT_MAX;
+
+    for(int i=0;i<N;i++) {
+        if((mask&(1<<i))==0) {
+            res = min(res, arr[curr][i] + tsp(arr, dp, (mask|(1<<i)), i, N));
+        }
     }
-    cout<<"\nRES::\n"<<""<<"\n";
+    return dp[curr][mask] = res;
+}
+
+void solve(vector<vector<int>>&arr) {
+    int N = arr.size();
+    vector<vector<int>>dp(N, vector<int>(1<<N, -1));
+    int min_cost = tsp(arr, dp, 1, 0, N);
+    cout<<"RES:: "<<min_cost<<"\n";
 }
 
 int main() {

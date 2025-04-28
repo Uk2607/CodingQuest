@@ -69,8 +69,20 @@ int tree_height(TreeNode *node) {
     return 1+max(tree_height(node->left), tree_height(node->right));
 }
 
-int tree_diameter(TreeNode *node) {
-    return 0;
+int tree_width(TreeNode *node) {  // The width of a binary tree is defined as the maximum number of nodes present at any level in the tree
+    queue<TreeNode*>q;
+    q.push(node);
+    int max_width = 0;
+    while(!q.empty()) {
+        int n = q.size();
+        max_width = max(max_width, n);
+        while(n--) {
+            TreeNode *node = q.front(); q.pop();
+            if(node->left) q.push(node->left);
+            if(node->right) q.push(node->right);
+        }
+    }
+    return max_width;
 }
 
 void solve(vector<string>&arr) {
@@ -80,8 +92,9 @@ void solve(vector<string>&arr) {
         root = insertNode(x, root);
     }
     int h = tree_height(root);
-    int d = tree_diameter(root);
+    int d = tree_width(root);
     cout<<"Height:: "<<h<<"\n";
+    cout<<"Width:: "<<d<<"\n";
     cout<<"RES:: "<<(h*d)<<"\n";
 }
 

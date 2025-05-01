@@ -6,11 +6,11 @@
 
 using namespace std;
 
-vector<vector<string>> get_input(string file_name) {
+vector<tuple<string, string, int>> get_input(string file_name) {
     string file_path = "2024/"+file_name+".in";
     ifstream file(file_path);
 
-    vector<vector<string>> arr;
+    vector<tuple<string, string, int>> arr;
 
     if (!file.is_open()) {
         cerr << "Failed to open file: " << file_path << endl;
@@ -20,24 +20,35 @@ vector<vector<string>> get_input(string file_name) {
     string line;
 
     while (getline(file, line)) {
-        vector<string>t;
         stringstream ss(line);
-        string x;
-        while(ss>>x) t.push_back(x);
-        arr.push_back(t);
+        string airline, type;
+        int cost;
+        ss>>airline>>type>>cost;
+        arr.push_back(make_tuple(airline.substr(0, airline.length()-1), type, cost));
     }
     
     file.close();
     return arr;
 }
 
-void solve(vector<vector<string>>&arr) {
-    cout<<"\nRES:: "<<""<<"\n\n";
+void solve(vector<tuple<string, string, int>>&arr) {
+    map<string, int>total_cost;
+    for(tuple<string, string, int>t: arr) {
+        string airline = get<0>(t);
+        string type = get<1>(t);
+        int cost = get<2>(t);
+        if(type=="Discount" || type=="Rebate") cost = -cost;
+        if(total_cost.find(airline)==total_cost.end()) total_cost[airline] = cost;
+        else total_cost[airline]+=cost;
+    }
+    int min_cost = INT_MAX;;
+    for(auto [_, cost]: total_cost) min_cost = min(min_cost, cost);
+    cout<<"\nRES:: "<<min_cost<<"\n\n";
     return;
 }
 
 int main() {
-    vector<vector<string>> arr = get_input("01");
+    vector<tuple<string, string, int>> arr = get_input("01");
     solve(arr);
     return 0;
 }

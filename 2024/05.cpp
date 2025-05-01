@@ -54,15 +54,9 @@ pair<vector<vector<int>>, vector<vector<int>>> get_input(string file_name) {
 }
 
 void solve(vector<vector<int>>arr, vector<vector<int>>routes) {
-    for(vector<int>v: arr) {
-        for(int x: v) cout<<x<<"\t"; 
-        cout<<"\n";
-    }
-    for(vector<int>v: routes) {
-        for(int x: v) cout<<x<<"->"; 
-        cout<<"\n";
-    }
-    cout<<"\nRES:: "<<""<<"\n\n";
+    int cost = 0;
+    for(vector<int>v: routes) for(int i=1;i<v.size();i++) cost += arr[v[i-1]][v[i]];
+    cout<<"\nRES:: "<<cost<<"\n\n";
     return;
 }
 

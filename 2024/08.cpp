@@ -6,38 +6,44 @@
 
 using namespace std;
 
-vector<vector<string>> get_input(string file_name) {
-    string file_path = "2024/"+file_name+".in";
-    ifstream file(file_path);
+#define ull unsigned long long
 
-    vector<vector<string>> arr;
-
-    if (!file.is_open()) {
-        cerr << "Failed to open file: " << file_path << endl;
-        return arr;
+ull dfs(int target, vector<int>&opt, vector<ull>&dp) {
+    if(target==0) return 1;
+    if(dp[target]!=-1) return dp[target];
+    ull ways = 0;
+    for(int x: opt) {
+        if(target-x>=0) {
+            ways += dfs(target-x, opt, dp);
+        }
     }
-
-    string line;
-
-    while (getline(file, line)) {
-        vector<string>t;
-        stringstream ss(line);
-        string x;
-        while(ss>>x) t.push_back(x);
-        arr.push_back(t);
-    }
-    
-    file.close();
-    return arr;
+    return dp[target] = ways;
 }
 
-void solve(vector<vector<string>>&arr) {
-    cout<<"\nRES:: "<<""<<"\n\n";
+ull countWays(int target, vector<int>& opt) {
+    vector<ull> dp(target + 1, 0);
+    dp[0] = 1; // Base case
+
+    for (int i = 1; i <= target; ++i)
+        for (int x : opt)
+            if (i - x >= 0) dp[i] += dp[i - x];
+
+    return dp[target];
+}
+
+void solve(int target, vector<int>&opt) {
+    // vector<ull>dp(target+1, -1);
+    // ull ways = dfs(target, opt, dp);
+    ull ways = countWays(target, opt);
+    cout<<"\nRES:: "<<ways<<"\n\n";
     return;
 }
 
 int main() {
-    vector<vector<string>> arr = get_input("08");
-    solve(arr);
+    int total_dist = 856;
+    vector<int>opts = {40, 12, 2, 1};
+    // int total_dist = 5;
+    // vector<int>opts = {3, 2, 1};
+    solve(total_dist, opts);
     return 0;
 }

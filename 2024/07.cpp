@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
-#include <stack>
+#include <regex>
 
 using namespace std;
 
@@ -26,26 +26,26 @@ Node* get_input(const std::string& file_name) {
         return nullptr;
     }
 
-    unordered_map<int, Node*> folderMap; // Folder number to Node mapping
+    unordered_map<int, Node*> folderMap; // Folder number -> Node
     string line;
     int currentFolder = -1;
 
-    // First pass: create all folders
+    // First pass: create folder nodes
     while (getline(infile, line)) {
-        if (line.empty()) continue;
         if (line.rfind("Folder: ", 0) == 0) {
             currentFolder = stoi(line.substr(8));
-            string folderName = "Folder_" + to_string(currentFolder);
+            string folderName = "Folder_" + to_string(currentFolder); // Temporary name
             folderMap[currentFolder] = new Node(folderName, false);
         }
     }
 
-    // Reset file for second pass
     infile.clear();
     infile.seekg(0);
     currentFolder = -1;
 
-    // Second pass: build the tree
+    // Regex to match folder references: "name [FOLDER X]"
+    regex folderRefRegex(R"((.+)\s+\[FOLDER (\d+)\])");
+
     while (getline(infile, line)) {
         if (line.empty()) continue;
 
@@ -58,21 +58,25 @@ Node* get_input(const std::string& file_name) {
             string trimmed = line.substr(dash + 1);
             while (!trimmed.empty() && trimmed[0] == ' ') trimmed = trimmed.substr(1);
 
-            size_t lastSpace = trimmed.find_last_of(' ');
-            if (lastSpace == string::npos) continue;
-
-            string name = trimmed.substr(0, lastSpace);
-            string lastToken = trimmed.substr(lastSpace + 1);
-
-            if (lastToken.rfind("[FOLDER", 0) == 0) {
-                int folderIndex = stoi(lastToken.substr(8, lastToken.size() - 9));
+            smatch match;
+            if (regex_match(trimmed, match, folderRefRegex)) {
+                // It's a folder reference
+                string name = match[1];
+                int folderIndex = stoi(match[2]);
                 if (folderMap.count(folderIndex)) {
                     Node* folderNode = folderMap[folderIndex];
-                    folderNode->name = name; // Update folder name to actual name
+                    folderNode->name = name; // Update with actual name
                     folderMap[currentFolder]->children.push_back(folderNode);
                 }
             } else {
-                long long size = stoll(lastToken);
+                // It's a file
+                size_t lastSpace = trimmed.find_last_of(' ');
+                if (lastSpace == string::npos) continue;
+
+                string name = trimmed.substr(0, lastSpace);
+                string sizeStr = trimmed.substr(lastSpace + 1);
+                long long size = stoll(sizeStr);
+
                 Node* fileNode = new Node(name, true, size);
                 folderMap[currentFolder]->children.push_back(fileNode);
             }

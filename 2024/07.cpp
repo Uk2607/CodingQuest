@@ -106,17 +106,39 @@ void print_tree(Node* node, int depth = 0) {
     }
 }
 
+bool is_deletable(const string& name) {
+    string lowered = name;
+    transform(lowered.begin(), lowered.end(), lowered.begin(), ::tolower);
+    return lowered.find("delete") != string::npos || lowered.find("temporary") != string::npos;
+}
+
+long long compute_deletable_size(Node* node, bool under_deletable_folder) {
+    if (!node) return 0;
+
+    long long total = 0;
+    bool current_deletable = under_deletable_folder || is_deletable(node->name);
+    if (node->isFile) {
+        if (current_deletable)
+            total += node->size;
+    } else {
+        for (Node* child : node->children) {
+            total += compute_deletable_size(child, current_deletable);
+        }
+    }
+    
+    return total;
+}
+
 void solve(Node* root) {
-
-    print_tree(root);
-
-    cout<<"\nRES:: "<<""<<"\n\n";
+    // print_tree(root);
+    long long total_size = compute_deletable_size(root, false);
+    cout<<"\nRES:: "<<total_size<<"\n\n";
     return;
 }
 
 int main() {
     // Node *root = get_input("07");
-    Node *root = get_input("07.0");
+    Node *root = get_input("07");
     solve(root);
     delete_tree(root);
     return 0;

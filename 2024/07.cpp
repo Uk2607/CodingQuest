@@ -1,9 +1,10 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <string>
-#include <regex>
+#include<iostream>
+#include<fstream>
+#include<sstream>
+#include<vector>
+#include<string>
+#include<regex>
+#include<queue>
 
 using namespace std;
 
@@ -78,6 +79,23 @@ void delete_tree(Node* node) {
 
 
 void solve(Node* root) {
+
+    queue<Node*>q;
+
+    q.push(root);
+    while(!q.empty()) {
+        int n = q.size();
+        while(n--) {
+            Node *curr = q.front();
+            q.pop();
+            cout<<curr->name<<" ";
+            for(Node *child: curr->children) {
+                q.push(child);
+            }
+        }
+        cout<<"\n";
+    }
+
     cout<<"\nRES:: "<<""<<"\n\n";
     return;
 }

@@ -125,7 +125,7 @@ long long compute_deletable_size(Node* node, bool under_deletable_folder) {
             total += compute_deletable_size(child, current_deletable);
         }
     }
-    
+
     return total;
 }
 
@@ -137,7 +137,6 @@ void solve(Node* root) {
 }
 
 int main() {
-    // Node *root = get_input("07");
     Node *root = get_input("07");
     solve(root);
     delete_tree(root);

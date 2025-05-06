@@ -1,10 +1,10 @@
-#include<iostream>
-#include<fstream>
-#include<sstream>
-#include<vector>
-#include<string>
-#include<regex>
-#include<queue>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <unordered_map>
+#include <string>
+#include <vector>
+#include <stack>
 
 using namespace std;
 
@@ -18,55 +18,69 @@ struct Node {
         : name(name), isFile(isFile), size(size) {}
 };
 
-Node* get_input(const string& file_name) {
-    string file_path = "2024/" + file_name + ".in";
-    ifstream file(file_path);
-
-    if (!file.is_open()) {
-        cerr << "Failed to open file: " << file_path << endl;
-        return nullptr; // Return nullptr if the file cannot be opened
+Node* get_input(const std::string& file_name) {
+    string file_path = "2024/"+file_name+".in";
+    ifstream infile(file_path);
+    if (!infile.is_open()) {
+        cerr << "Unable to open file: " << file_name << endl;
+        return nullptr;
     }
 
-    Node* root = new Node("Root", false); // Create a root node
-    Node* currentFolder = root; // Start with the root folder
-    vector<Node*> folderStack; // Stack to keep track of folders
-
+    unordered_map<int, Node*> folderMap; // Folder number to Node mapping
     string line;
-    while (getline(file, line)) {
-        // Trim leading spaces
-        line.erase(0, line.find_first_not_of(" \t"));
+    int currentFolder = -1;
 
-        // Check if the line indicates a folder
-        if (line.find("Folder:") != string::npos) {
-            string folderName = line.substr(line.find(":") + 2); // Extract folder name
-            Node* newFolder = new Node(folderName, false); // Create a new folder node
-            currentFolder->children.push_back(newFolder); // Add new folder to current folder
-            folderStack.push_back(currentFolder); // Push current folder to stack
-            currentFolder = newFolder; // Move to the new folder
-        } else {
-            // Process files
-            regex fileRegex(R"((.+?)\s+(\d+)(?:\s+$$FOLDER\s+\d+$$)?)");
-            smatch match;
-
-            if (regex_match(line, match, fileRegex)) {
-                string fileName = match[1].str(); // File name
-                long long fileSize = stoll(match[2].str()); // File size
-                Node* newFile = new Node(fileName, true, fileSize); // Create a new file node
-                currentFolder->children.push_back(newFile); // Add file to current folder
-            }
+    // First pass: create all folders
+    while (getline(infile, line)) {
+        if (line.empty()) continue;
+        if (line.rfind("Folder: ", 0) == 0) {
+            currentFolder = stoi(line.substr(8));
+            string folderName = "Folder_" + to_string(currentFolder);
+            folderMap[currentFolder] = new Node(folderName, false);
         }
+    }
 
-        // Check for indentation or end of folder (you may need to adjust this logic)
-        if (line.empty() || line.find("Folder:") != string::npos) {
-            if (!folderStack.empty()) {
-                currentFolder = folderStack.back(); // Pop back to the previous folder
-                folderStack.pop_back();
+    // Reset file for second pass
+    infile.clear();
+    infile.seekg(0);
+    currentFolder = -1;
+
+    // Second pass: build the tree
+    while (getline(infile, line)) {
+        if (line.empty()) continue;
+
+        if (line.rfind("Folder: ", 0) == 0) {
+            currentFolder = stoi(line.substr(8));
+        } else if (line[0] == ' ') {
+            size_t dash = line.find('-');
+            if (dash == string::npos) continue;
+
+            string trimmed = line.substr(dash + 1);
+            while (!trimmed.empty() && trimmed[0] == ' ') trimmed = trimmed.substr(1);
+
+            size_t lastSpace = trimmed.find_last_of(' ');
+            if (lastSpace == string::npos) continue;
+
+            string name = trimmed.substr(0, lastSpace);
+            string lastToken = trimmed.substr(lastSpace + 1);
+
+            if (lastToken.rfind("[FOLDER", 0) == 0) {
+                int folderIndex = stoi(lastToken.substr(8, lastToken.size() - 9));
+                if (folderMap.count(folderIndex)) {
+                    Node* folderNode = folderMap[folderIndex];
+                    folderNode->name = name; // Update folder name to actual name
+                    folderMap[currentFolder]->children.push_back(folderNode);
+                }
+            } else {
+                long long size = stoll(lastToken);
+                Node* fileNode = new Node(name, true, size);
+                folderMap[currentFolder]->children.push_back(fileNode);
             }
         }
     }
 
-    file.close();
-    return root;
+    infile.close();
+    return folderMap.count(0) ? folderMap[0] : nullptr;
 }
 
 // Function to delete the tree and free memory
@@ -78,30 +92,27 @@ void delete_tree(Node* node) {
 }
 
 
+void print_tree(Node* node, int depth = 0) {
+    if (!node) return;
+    cout << string(depth * 2, ' ') << (node->isFile ? "File: " : "Folder: ") << node->name;
+    if (node->isFile) cout << " (" << node->size << ")";
+    cout << endl;
+    for (Node* child : node->children) {
+        print_tree(child, depth + 1);
+    }
+}
+
 void solve(Node* root) {
 
-    queue<Node*>q;
-
-    q.push(root);
-    while(!q.empty()) {
-        int n = q.size();
-        while(n--) {
-            Node *curr = q.front();
-            q.pop();
-            cout<<curr->name<<" ";
-            for(Node *child: curr->children) {
-                q.push(child);
-            }
-        }
-        cout<<"\n";
-    }
+    print_tree(root);
 
     cout<<"\nRES:: "<<""<<"\n\n";
     return;
 }
 
 int main() {
-    Node *root = get_input("07");
+    // Node *root = get_input("07");
+    Node *root = get_input("07.0");
     solve(root);
     delete_tree(root);
     return 0;
